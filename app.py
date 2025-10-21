@@ -42,13 +42,22 @@ def shift_headings(md_text: str, direction: str) -> str:
     return "\n".join(new_lines)
 
 
-def fix_bold_symbol_issue(md_text: str) -> str:
+def fix_bold_symbol_issue(md: str) -> str:
     """
-    If **bold text** ends with a symbol (!, %, ), ., ?, :, ;, etc.,
-    add a space after ** to prevent rendering issues.
+    Fix Markdown bold rendering issues by adding a space after the closing '**'
+    when the bolded content contains symbol characters (non-alphanumeric, non-space)
+    and the '**' is not already followed by whitespace.
     """
-    # Pattern: **content(symbol)** → **content(symbol)**␣
-    return re.sub(r"(\*\*[^\*]*[\W]\*\*)(?!\s)", r"\1 ", md_text)
+    pattern = re.compile(r'\*\*(.+?)\*\*(\s*)', re.DOTALL)
+
+    def repl(m):
+        inner = m.group(1)
+        after = m.group(2)
+        if re.search(r'[^0-9A-Za-z\s]', inner) and after == '':
+            return f'**{inner}** '
+        return m.group(0)
+
+    return pattern.sub(repl, md)
 
 def number_headings(md_text: str) -> str:
     """

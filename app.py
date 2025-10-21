@@ -14,10 +14,10 @@ input_text = st.sidebar.text_area("Enter text", height=250, placeholder="Enter m
 # --- Cleanup Options ---
 # The app will rerun every time an option is changed.
 remove_blank_lines = st.sidebar.checkbox("Remove blank lines in list", value=True)
-remove_links = st.sidebar.checkbox("🔗 Remove links", value=True)
+remove_links = st.sidebar.checkbox("🔗 Remove links")
 remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
-fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting", value=True)
 remove_bold = st.sidebar.checkbox("**Remove bold** formatting")
+fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting issues", value=True)
 
 # --- Structure Options ---
 auto_number_headings = st.sidebar.checkbox("🔢 Auto-number headings", value=False)

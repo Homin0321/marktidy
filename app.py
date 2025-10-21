@@ -9,8 +9,6 @@ st.sidebar.header("🪄 MarkTidy")
 # The app will rerun every time the input text is changed.
 input_text = st.sidebar.text_area("Enter text", height=250, placeholder="Enter markdown text here...", label_visibility="collapsed")
 
-# Removed the 'Convert' button.
-
 # --- Cleanup Options ---
 # The app will rerun every time an option is changed.
 remove_blank_lines = st.sidebar.checkbox("Remove blank lines in list", value=True)
@@ -172,14 +170,14 @@ if input_text.strip():
         output_text = number_headings(output_text)
 
 # --- Main layout ---
-col1, col2 = st.columns(2)  # Create two columns
-
-with col1:
-    st.markdown(output_text, unsafe_allow_html=True)
-
-with col2:
-    st.code(output_text, language="markdown")
-
 # Initial state guidance message
 if not input_text.strip():
     st.info("Enter markdown text in the left sidebar to see the results displayed here automatically.")
+else:
+    col1, col2 = st.columns(2)  # Create two columns
+
+    with col1:
+        st.markdown(output_text, unsafe_allow_html=True)
+
+    with col2:
+        st.code(output_text, language="markdown")

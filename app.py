@@ -54,7 +54,7 @@ def number_headings(md_text: str) -> str:
     """
     Automatically adds numbers (e.g., 1., 1.1, 2.) based on heading hierarchy.
     H1(#) is left unchanged, numbering starts from H2(##).
-    Ignores content within code blocks.
+    Ignores all content within code blocks regardless of language.
     """
     lines = md_text.splitlines()
     new_lines = []
@@ -67,12 +67,13 @@ def number_headings(md_text: str) -> str:
     for line in lines:
         stripped_line = line.strip()
 
-        # Toggle code block
+        # Check for code block start/end
         if stripped_line.startswith("```"):
             in_code_block = not in_code_block
             new_lines.append(line)
             continue
 
+        # Skip all processing if in code block
         if in_code_block:
             new_lines.append(line)
             continue

@@ -123,30 +123,27 @@ if input_text.strip():
     lines = output_text.splitlines()
 
     if remove_blank_lines:
-        # Apply blank line removal only within lists
         new_lines = []
-        in_list = False
-        last_list_index = -1
-        
-        # First pass: find the last list item
-        for i, line in enumerate(lines):
-            if line.strip().startswith("- ") or line.strip().startswith("* "):
-                last_list_index = i
+        is_list_item_flags = []
+        for line in lines:
+            is_list_item_flags.append(line.strip().startswith("- ") or line.strip().startswith("* ") or re.match(r"^\d+\.\s", line.strip()))
 
-        # Second pass: process lines
         for i, line in enumerate(lines):
-            if line.strip().startswith("- ") or line.strip().startswith("* "):
-                in_list = True
-                new_lines.append(line)
-            elif in_list and line.strip() == "":
-                # Keep blank line if it's after the last list item
-                if i > last_list_index:
-                    new_lines.append(line)
-                # Skip blank lines within the list
+            prev_line_was_list_item = False
+            if i > 0:
+                prev_line_was_list_item = is_list_item_flags[i-1]
+
+            current_line_is_blank = line.strip() == ""
+
+            next_line_is_list_item = False
+            if i < len(lines) - 1:
+                next_line_is_list_item = is_list_item_flags[i+1]
+
+            if current_line_is_blank and prev_line_was_list_item and next_line_is_list_item:
                 continue
-            else:
-                in_list = False
-                new_lines.append(line)
+
+            new_lines.append(line)
+
         lines = new_lines
 
     if remove_bold:

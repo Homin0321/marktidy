@@ -132,17 +132,18 @@ if input_text.strip():
         for i, line in enumerate(lines):
             if line.strip().startswith("- ") or line.strip().startswith("* "):
                 last_list_index = i
-        
+
         # Second pass: process lines
         for i, line in enumerate(lines):
             if line.strip().startswith("- ") or line.strip().startswith("* "):
                 in_list = True
                 new_lines.append(line)
             elif in_list and line.strip() == "":
-                if i <= last_list_index:  # Skip blank lines only within the list
-                    continue
-                else:  # Keep blank lines after the last list item
+                # Keep blank line if it's after the last list item
+                if i > last_list_index:
                     new_lines.append(line)
+                # Skip blank lines within the list
+                continue
             else:
                 in_list = False
                 new_lines.append(line)

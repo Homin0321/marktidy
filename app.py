@@ -126,12 +126,23 @@ if input_text.strip():
         # Apply blank line removal only within lists
         new_lines = []
         in_list = False
-        for line in lines:
-            if line.strip().startswith("- ") or line.strip().startswith("* "):  # Assuming bullet lists
+        last_list_index = -1
+        
+        # First pass: find the last list item
+        for i, line in enumerate(lines):
+            if line.strip().startswith("- ") or line.strip().startswith("* "):
+                last_list_index = i
+        
+        # Second pass: process lines
+        for i, line in enumerate(lines):
+            if line.strip().startswith("- ") or line.strip().startswith("* "):
                 in_list = True
                 new_lines.append(line)
             elif in_list and line.strip() == "":
-                continue  # Skip blank lines within lists
+                if i <= last_list_index:  # Skip blank lines only within the list
+                    continue
+                else:  # Keep blank lines after the last list item
+                    new_lines.append(line)
             else:
                 in_list = False
                 new_lines.append(line)

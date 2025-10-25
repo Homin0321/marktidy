@@ -192,7 +192,7 @@ if input_text.strip():
         lines = [re.sub(r"\*\*(.*?)\*\*", r"\1", line) for line in lines]
 
     if remove_links:
-        lines = [re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", line) for line in lines]
+        lines = [re.sub(r"\[([^\]]*)\]\([^)]+\)", r"\1", line) for line in lines]
 
     if remove_images:
         lines = [re.sub(r"!\[.*?\]\([^)]+\)", "", line) for line in lines]

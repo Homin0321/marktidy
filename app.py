@@ -13,6 +13,7 @@ input_text = st.sidebar.text_area("Enter text", height=250, placeholder="Enter m
 
 # --- Cleanup Options Section ---
 # Toggle switches for various markdown cleanup operations
+clear_formatting = st.sidebar.checkbox("Clear all formatting")
 remove_blank_lines = st.sidebar.checkbox("Remove blank lines in list", value=True)
 remove_links = st.sidebar.checkbox("🔗 Remove links")
 remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
@@ -177,6 +178,44 @@ def remove_blank_lines_between_list_items(lines: list[str]) -> list[str]:
     
     return new_lines
 
+def clear_markdown_format(md_text: str) -> str:
+    """
+    Removes all common markdown formatting from the text.
+
+    Args:
+        md_text: Input markdown text.
+
+    Returns:
+        Text with markdown formatting removed.
+    """
+    # 1. Remove images, keeping alt text
+    md_text = re.sub(r"!\[([^\]]*)\]\([^)]+\)", r"\1", md_text)
+    # 2. Remove links, keeping link text
+    md_text = re.sub(r"\[([^\]]*)\]\([^)]+\)", r"\1", md_text)
+    # 3. Remove bold, italic, strikethrough, and inline code
+    md_text = re.sub(r"\*\*(.*?)\*\*", r"\1", md_text)  # Bold
+    md_text = re.sub(r"__(.*?)__", r"\1", md_text)    # Bold
+    md_text = re.sub(r"\*(.*?)\*", r"\1", md_text)      # Italic
+    md_text = re.sub(r"_(.*?)_", r"\1", md_text)      # Italic
+    md_text = re.sub(r"~~(.*?)~~", r"\1", md_text)    # Strikethrough
+    md_text = re.sub(r"`(.*?)`", r"\1", md_text)        # Inline code
+
+    lines = md_text.splitlines()
+    new_lines = []
+    for line in lines:
+        # 4. Remove headings
+        line = re.sub(r"^#+\s*", "", line)
+        # 5. Remove list markers
+        line = re.sub(r"^\s*([\*\-\+]|\d+\.)\s+", "", line)
+        # 6. Remove blockquotes
+        line = re.sub(r"^\s*>\s?", "", line)
+        # 7. Remove horizontal rules
+        if re.match(r"^\s*([-*_]){3,}\s*$", line):
+            continue
+        new_lines.append(line)
+
+    return "\n".join(new_lines)
+
 # --- Main Processing Logic ---
 output_text = input_text
 
@@ -213,6 +252,10 @@ if input_text.strip():
     # Apply heading numbers last to ensure correct numbering
     if auto_number_headings:
         output_text = number_headings(output_text)
+
+    if clear_formatting:
+        # Clear all other formatting if this option is selected
+        output_text = clear_markdown_format(output_text)
 
 # --- Display Section ---
 if not input_text.strip():

@@ -19,8 +19,10 @@ remove_links = st.sidebar.checkbox("🔗 Remove links")
 remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
 remove_bold = st.sidebar.checkbox("**Remove bold** formatting")
 fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting issues", value=True)
+remove_horizontal = st.sidebar.checkbox("Remove horizontal rules")
 
 # --- Document Structure Options Section ---
+remove_plain_text = st.sidebar.checkbox("Remove plain text")
 auto_number_headings = st.sidebar.checkbox("🔢 Auto-number headings", value=False)
 heading_shift = st.sidebar.slider("🔠 Adjust heading level", min_value=-3, max_value=3, value=0)
 
@@ -75,6 +77,41 @@ def fix_bold_symbol_issue(md: str) -> str:
         return m.group(0)
 
     return pattern.sub(repl, md)
+
+def remove_paragraph(md_text: str) -> str:
+    """
+    Removes paragraphs, blockquotes, and code blocks from markdown text.
+    It preserves headings, lists, horizontal rules, and blank lines.
+
+    Args:
+        md_text: Input markdown text.
+
+    Returns:
+        Markdown text with specified elements removed.
+    """
+    lines = md_text.splitlines()
+    new_lines = []
+    in_code_block = False
+
+    for line in lines:
+        stripped_line = line.strip()
+
+        if stripped_line.startswith("```"):
+            in_code_block = not in_code_block
+            continue
+
+        if in_code_block:
+            continue
+
+        # Preserve headings, lists, horizontal rules, and blank lines
+        if (stripped_line.startswith("#") or
+            stripped_line.startswith(("- ", "* ")) or
+            re.match(r"^\d+\.\s", stripped_line) or
+            re.match(r"^\s*([-*_]){3,}\s*$", stripped_line) or
+            not stripped_line):
+            new_lines.append(line)
+
+    return "\n".join(new_lines)
 
 def number_headings(md_text: str) -> str:
     """
@@ -243,11 +280,17 @@ if input_text.strip():
     if fix_bold_symbols:
         output_text = fix_bold_symbol_issue(output_text)
 
+    if remove_horizontal:
+        output_text = re.sub(r"^\s*([-*_]){3,}\s*$", "", output_text, flags=re.MULTILINE)
+
     # Apply heading modifications
     if heading_shift != 0:
         direction = "+1" if heading_shift > 0 else "-1"
         for _ in range(abs(heading_shift)):
             output_text = shift_headings(output_text, direction)
+
+    if remove_plain_text:
+        output_text = remove_paragraph(output_text)
 
     # Apply heading numbers last to ensure correct numbering
     if auto_number_headings:

@@ -22,6 +22,7 @@ fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting issues", value=T
 remove_horizontal = st.sidebar.checkbox("Remove horizontal rules")
 
 # --- Document Structure Options Section ---
+extract_heading = st.sidebar.checkbox("Extract headings only")
 remove_plain_text = st.sidebar.checkbox("Remove plain text")
 auto_number_headings = st.sidebar.checkbox("🔢 Auto-number headings", value=False)
 heading_shift = st.sidebar.slider("🔠 Adjust heading level", min_value=-3, max_value=3, value=0)
@@ -253,10 +254,45 @@ def clear_markdown_format(md_text: str) -> str:
 
     return "\n".join(new_lines)
 
+
+def extract_headings(md_text: str) -> str:
+    """
+    Extracts only the heading lines from markdown text.
+
+    Args:
+        md_text: Input markdown text.
+
+    Returns:
+        String containing only the heading lines.
+    """
+    lines = md_text.splitlines()
+    heading_lines = []
+    in_code_block = False
+
+    for line in lines:
+        stripped_line = line.strip()
+
+        if stripped_line.startswith("```"):
+            in_code_block = not in_code_block
+            continue
+
+        if in_code_block:
+            continue
+
+        # Preserve headings
+        if stripped_line.startswith("#"):
+            heading_lines.append(line)
+
+    return "\n".join(heading_lines)
+
+
 # --- Main Processing Logic ---
 output_text = input_text
 
 if input_text.strip():
+    if extract_heading:
+        output_text = extract_headings(output_text)
+
     # Convert input to lines for processing
     lines = output_text.splitlines()
 

@@ -19,7 +19,7 @@ remove_links = st.sidebar.checkbox("🔗 Remove links")
 remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
 remove_bold = st.sidebar.checkbox("**Remove bold** formatting")
 fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting issues", value=True)
-modify_strikethrough = st.sidebar.checkbox("Modify ~~strikethrough~~ to ~strikethrough~", value=True)
+modify_strikethrough = st.sidebar.checkbox("Fix ~~strikethrough~~ formatting", value=True)
 remove_horizontal = st.sidebar.checkbox("Remove horizontal rules")
 
 # --- Document Structure Options Section ---

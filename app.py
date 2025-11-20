@@ -17,6 +17,7 @@ clear_formatting = st.sidebar.checkbox("Clear all formatting")
 remove_blank_lines = st.sidebar.checkbox("Remove blank lines in list", value=True)
 remove_links = st.sidebar.checkbox("🔗 Remove links")
 remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
+fix_image_links = st.sidebar.checkbox("Fix image links")
 remove_bold = st.sidebar.checkbox("**Remove bold** formatting")
 fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting issues", value=True)
 remove_horizontal = st.sidebar.checkbox("Remove horizontal rules")
@@ -286,6 +287,29 @@ def extract_headings(md_text: str) -> str:
     return "\n".join(heading_lines)
 
 
+def fix_image_links(md_text: str) -> str:
+    """
+    Converts Obsidian-style image links to standard markdown links.
+    Example: ![[image.png]] -> ![image.png](./image.png)
+
+    Args:
+        md_text: Input markdown text.
+
+    Returns:
+        Markdown text with corrected image links.
+    """
+    # Regex to find ![[filename.extension]]
+    pattern = re.compile(r"!\[\[(.*?)\]\]")
+
+    # Replacement function
+    def repl(m):
+        filename = m.group(1)
+        # Use filename as alt text and create a relative path
+        return f"![{filename}](./{filename})"
+
+    return pattern.sub(repl, md_text)
+
+
 # --- Main Processing Logic ---
 output_text = input_text
 
@@ -315,6 +339,9 @@ if input_text.strip():
     # Apply formatting fixes
     if fix_bold_symbols:
         output_text = fix_bold_symbol_issue(output_text)
+
+    if fix_image_links:
+        output_text = fix_image_links(output_text)
 
     if remove_horizontal:
         output_text = re.sub(r"^\s*([-*_]){3,}\s*$", "", output_text, flags=re.MULTILINE)

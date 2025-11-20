@@ -20,6 +20,7 @@ remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
 fix_image_links = st.sidebar.checkbox("Fix image links")
 remove_bold = st.sidebar.checkbox("**Remove bold** formatting")
 fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting issues", value=True)
+modify_strikethrough = st.sidebar.checkbox("Fix ~~strikethrough~~ formatting", value=True)
 remove_horizontal = st.sidebar.checkbox("Remove horizontal rules")
 
 # --- Document Structure Options Section ---
@@ -332,6 +333,9 @@ if input_text.strip():
 
     if remove_images:
         lines = [re.sub(r"!\[.*?\]\([^)]+\)", "", line) for line in lines]
+
+    if modify_strikethrough:
+        lines = [re.sub(r"~~(.*?)~~", r"~\1~", line) for line in lines]
 
     # Reconstruct text from processed lines
     output_text = "\n".join(lines)

@@ -292,6 +292,7 @@ def fix_image_links(md_text: str) -> str:
     """
     Converts Obsidian-style image links to standard markdown links.
     Example: ![[image.png]] -> ![image.png](./image.png)
+    Also, replaces spaces in the filename with %20.
 
     Args:
         md_text: Input markdown text.
@@ -305,8 +306,10 @@ def fix_image_links(md_text: str) -> str:
     # Replacement function
     def repl(m):
         filename = m.group(1)
+        # URL encode spaces
+        encoded_filename = filename.replace(" ", "%20")
         # Use filename as alt text and create a relative path
-        return f"![{filename}](./{filename})"
+        return f"![{filename}](./{encoded_filename})"
 
     return pattern.sub(repl, md_text)
 

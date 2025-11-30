@@ -14,19 +14,19 @@ input_text = st.sidebar.text_area("Enter text", height=250, placeholder="Enter m
 # --- Cleanup Options Section ---
 # Toggle switches for various markdown cleanup operations
 clear_formatting = st.sidebar.checkbox("Clear all formatting")
-remove_blank_lines = st.sidebar.checkbox("Remove blank lines in list", value=True)
-remove_links = st.sidebar.checkbox("🔗 Remove links")
-remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
-fix_image_links = st.sidebar.checkbox("Fix image links")
+remove_horizontal = st.sidebar.checkbox("Remove horizontal rules")
 remove_bold = st.sidebar.checkbox("**Remove bold** formatting")
+remove_links = st.sidebar.checkbox("🔗 Remove links")
+remove_blank_lines = st.sidebar.checkbox("Remove blank lines in list", value=True)
+remove_images = st.sidebar.checkbox("🖼️ Remove images", value=True)
+fix_image_links = st.sidebar.checkbox("Fix image links", value=True)
 fix_bold_symbols = st.sidebar.checkbox("**Fix bold** formatting issues", value=True)
 modify_strikethrough = st.sidebar.checkbox("Fix ~~strikethrough~~ formatting", value=True)
-remove_horizontal = st.sidebar.checkbox("Remove horizontal rules")
 
 # --- Document Structure Options Section ---
 extract_heading = st.sidebar.checkbox("Extract headings only")
 remove_plain_text = st.sidebar.checkbox("Remove plain text")
-auto_number_headings = st.sidebar.checkbox("🔢 Auto-number headings", value=False)
+auto_number_headings = st.sidebar.checkbox("🔢 Auto-number headings")
 heading_shift = st.sidebar.slider("🔠 Adjust heading level", min_value=-3, max_value=3, value=0)
 
 # --- Helper Functions ---
@@ -375,7 +375,7 @@ if not input_text.strip():
     st.info("Enter markdown text in the left sidebar to see the results displayed here automatically.")
 else:
     # Create side-by-side view of rendered and raw markdown
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([6, 4])
     with col1:
         st.markdown(output_text, unsafe_allow_html=True)
     with col2:
